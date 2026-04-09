@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+
+  # ── PostgreSQL local ────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: dentalpro_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER:-dental_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dental_pass}
+      POSTGRES_DB:       ${POSTGRES_DB:-dental_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dental_user} -d ${POSTGRES_DB:-dental_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── App (Node / Express) ────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner        # use final stage
+    container_name: dentalpro_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgres://${POSTGRES_USER:-dental_user}:${POSTGRES_PASSWORD:-dental_pass}@db:5432/${POSTGRES_DB:-dental_db}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Live-reload public folder in dev (optional)
+      - ./public:/app/public:ro
+
+volumes:
+  pgdata:
+    driver: local
