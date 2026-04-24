@@ -18,13 +18,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Conexión a PostgreSQL via DATABASE_URL ───────────────────
-const pool = new Pool({
+const poolConfig = {
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }, // requerido en Render
-});
+};
+
+// Habilita SSL solo en producción o cuando se requiere explícitamente.
+if (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') {
+  poolConfig.ssl = { rejectUnauthorized: false };
+}
+
+const pool = new Pool(poolConfig);
 
 pool.connect()
-  .then(c => { console.log('✅  Conectado a PostgreSQL (Render)'); c.release(); })
+  .then(c => { console.log('✅  Conectado a PostgreSQL'); c.release(); })
   .catch(err => console.error('❌  Error de conexión a DB:', err.message));
 
 // ── Helpers ──────────────────────────────────────────────────
