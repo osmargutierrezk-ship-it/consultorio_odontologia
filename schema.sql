@@ -1,13 +1,12 @@
 -- ============================================================
 --  LumiPlus – Clínica Dental & Psicológica
 --  Schema actualizado con soporte para dos tipos de consulta
+--
+--  ⚠️  Render gestiona la base de datos mediante la variable de
+--  entorno MYSQL_URL (o MYSQLHOST / MYSQLUSER / etc.).
+--  NO se usa CREATE DATABASE ni USE: el cliente ya se conecta
+--  directamente a la DB correcta según esas variables.
 -- ============================================================
-
-CREATE DATABASE IF NOT EXISTS lumiplus_db
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE lumiplus_db;
 
 -- ----------------------------------------------------------
 -- Tabla de pacientes
