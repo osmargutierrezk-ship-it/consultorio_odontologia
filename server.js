@@ -1,12 +1,12 @@
 // ============================================================
 //  LumiPlus – server.js
-//  Node.js + Express + MySQL2
+//  Node.js + Express + PostgreSQL (Render DATABASE_URL)
 // ============================================================
 
-const express = require('express');
-const mysql   = require('mysql2/promise');
-const cors    = require('cors');
-const path    = require('path');
+const express    = require('express');
+const { Pool }   = require('pg');
+const cors       = require('cors');
+const path       = require('path');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -17,19 +17,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ── Conexión a MySQL ─────────────────────────────────────────
-const pool = mysql.createPool({
-  host     : process.env.DB_HOST     || 'localhost',
-  user     : process.env.DB_USER     || 'root',
-  password : process.env.DB_PASSWORD || '',
-  database : process.env.DB_NAME     || 'lumiplus_db',
-  waitForConnections: true,
-  connectionLimit   : 10,
+// ── Conexión a PostgreSQL via DATABASE_URL ───────────────────
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }, // requerido en Render
 });
+
+pool.connect()
+  .then(c => { console.log('✅  Conectado a PostgreSQL (Render)'); c.release(); })
+  .catch(err => console.error('❌  Error de conexión a DB:', err.message));
 
 // ── Helpers ──────────────────────────────────────────────────
 function validarCita(body) {
-  const { nombre, apellido, telefono, email, fecha_cita, hora_cita, tipo_consulta } = body;
+  const { nombre, apellido, telefono, fecha_cita, hora_cita, tipo_consulta } = body;
   if (!nombre || !apellido || !telefono || !fecha_cita || !hora_cita || !tipo_consulta)
     return 'Faltan campos obligatorios.';
   if (!['odontologica', 'psicologica'].includes(tipo_consulta))
@@ -41,93 +41,92 @@ function validarCita(body) {
 
 /**
  * POST /api/citas
- * Crea o actualiza el paciente y registra la cita.
- * Body JSON:
- *   nombre, apellido, telefono, email (opt), fecha_nac (opt),
- *   fecha_cita, hora_cita, motivo (opt), tipo_consulta
  */
 app.post('/api/citas', async (req, res) => {
   const error = validarCita(req.body);
   if (error) return res.status(400).json({ ok: false, mensaje: error });
 
   const {
-    nombre, apellido, telefono, email = null,
-    fecha_nac = null, fecha_cita, hora_cita,
-    motivo = null, tipo_consulta,
+    nombre, apellido, telefono,
+    email     = null,
+    fecha_nac = null,
+    fecha_cita, hora_cita,
+    motivo    = null,
+    tipo_consulta,
   } = req.body;
 
-  const conn = await pool.getConnection();
+  const client = await pool.connect();
   try {
-    await conn.beginTransaction();
+    await client.query('BEGIN');
 
-    // Upsert paciente por email (o insertar nuevo si no hay email)
     let pacienteId;
     if (email) {
-      const [rows] = await conn.execute(
-        'SELECT id FROM pacientes WHERE email = ?', [email]
+      const existing = await client.query(
+        'SELECT id FROM pacientes WHERE email = $1', [email]
       );
-      if (rows.length > 0) {
-        pacienteId = rows[0].id;
-        await conn.execute(
-          'UPDATE pacientes SET nombre=?, apellido=?, telefono=?, fecha_nac=? WHERE id=?',
+      if (existing.rows.length > 0) {
+        pacienteId = existing.rows[0].id;
+        await client.query(
+          'UPDATE pacientes SET nombre=$1, apellido=$2, telefono=$3, fecha_nac=$4 WHERE id=$5',
           [nombre, apellido, telefono, fecha_nac, pacienteId]
         );
       } else {
-        const [result] = await conn.execute(
-          'INSERT INTO pacientes (nombre, apellido, telefono, email, fecha_nac) VALUES (?,?,?,?,?)',
+        const r = await client.query(
+          `INSERT INTO pacientes (nombre, apellido, telefono, email, fecha_nac)
+           VALUES ($1,$2,$3,$4,$5) RETURNING id`,
           [nombre, apellido, telefono, email, fecha_nac]
         );
-        pacienteId = result.insertId;
+        pacienteId = r.rows[0].id;
       }
     } else {
-      const [result] = await conn.execute(
-        'INSERT INTO pacientes (nombre, apellido, telefono, email, fecha_nac) VALUES (?,?,?,?,?)',
-        [nombre, apellido, telefono, null, fecha_nac]
+      const r = await client.query(
+        `INSERT INTO pacientes (nombre, apellido, telefono, fecha_nac)
+         VALUES ($1,$2,$3,$4) RETURNING id`,
+        [nombre, apellido, telefono, fecha_nac]
       );
-      pacienteId = result.insertId;
+      pacienteId = r.rows[0].id;
     }
 
-    // Insertar cita
-    const [citaResult] = await conn.execute(
+    const cita = await client.query(
       `INSERT INTO citas (paciente_id, tipo_consulta, fecha_cita, hora_cita, motivo)
-       VALUES (?, ?, ?, ?, ?)`,
+       VALUES ($1, $2, $3, $4, $5) RETURNING id`,
       [pacienteId, tipo_consulta, fecha_cita, hora_cita, motivo]
     );
 
-    await conn.commit();
+    await client.query('COMMIT');
 
     res.status(201).json({
       ok     : true,
       mensaje: `Cita ${tipo_consulta} agendada exitosamente.`,
-      cita_id: citaResult.insertId,
+      cita_id: cita.rows[0].id,
     });
   } catch (err) {
-    await conn.rollback();
+    await client.query('ROLLBACK');
     console.error(err);
     res.status(500).json({ ok: false, mensaje: 'Error interno al agendar la cita.' });
   } finally {
-    conn.release();
+    client.release();
   }
 });
 
 /**
  * GET /api/citas
- * Devuelve todas las citas. Filtros opcionales:
- *   ?tipo=odontologica|psicologica
- *   ?estado=pendiente|confirmada|cancelada|completada
- *   ?fecha=YYYY-MM-DD
+ * Filtros: ?tipo=odontologica|psicologica  ?estado=pendiente  ?fecha=YYYY-MM-DD
  */
 app.get('/api/citas', async (req, res) => {
   const { tipo, estado, fecha } = req.query;
-  let sql    = 'SELECT * FROM v_citas_detalle WHERE 1=1';
-  const args = [];
+  const conditions = [];
+  const args       = [];
 
-  if (tipo)   { sql += ' AND tipo_consulta = ?'; args.push(tipo);   }
-  if (estado) { sql += ' AND estado = ?';        args.push(estado); }
-  if (fecha)  { sql += ' AND fecha_cita = ?';    args.push(fecha);  }
+  if (tipo)   { args.push(tipo);   conditions.push(`tipo_consulta = $${args.length}`); }
+  if (estado) { args.push(estado); conditions.push(`estado = $${args.length}`);        }
+  if (fecha)  { args.push(fecha);  conditions.push(`fecha_cita = $${args.length}`);    }
+
+  const where = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
+  const sql   = `SELECT * FROM v_citas_detalle ${where} ORDER BY fecha_cita, hora_cita`;
 
   try {
-    const [rows] = await pool.execute(sql, args);
+    const { rows } = await pool.query(sql, args);
     res.json({ ok: true, total: rows.length, citas: rows });
   } catch (err) {
     console.error(err);
@@ -137,8 +136,6 @@ app.get('/api/citas', async (req, res) => {
 
 /**
  * PATCH /api/citas/:id/estado
- * Actualiza el estado de una cita.
- * Body: { estado: 'confirmada' | 'cancelada' | 'completada' }
  */
 app.patch('/api/citas/:id/estado', async (req, res) => {
   const { estado } = req.body;
@@ -147,11 +144,11 @@ app.patch('/api/citas/:id/estado', async (req, res) => {
     return res.status(400).json({ ok: false, mensaje: 'Estado inválido.' });
 
   try {
-    const [result] = await pool.execute(
-      'UPDATE citas SET estado = ? WHERE id = ?',
+    const { rowCount } = await pool.query(
+      'UPDATE citas SET estado = $1 WHERE id = $2',
       [estado, req.params.id]
     );
-    if (result.affectedRows === 0)
+    if (rowCount === 0)
       return res.status(404).json({ ok: false, mensaje: 'Cita no encontrada.' });
     res.json({ ok: true, mensaje: 'Estado actualizado.' });
   } catch (err) {
