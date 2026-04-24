@@ -7,6 +7,7 @@ const express    = require('express');
 const { Pool }   = require('pg');
 const cors       = require('cors');
 const path       = require('path');
+const fs         = require('fs').promises;
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -29,9 +30,26 @@ if (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true') {
 
 const pool = new Pool(poolConfig);
 
-pool.connect()
-  .then(c => { console.log('✅  Conectado a PostgreSQL'); c.release(); })
-  .catch(err => console.error('❌  Error de conexión a DB:', err.message));
+(async () => {
+  try {
+    const client = await pool.connect();
+    console.log('✅  Conectado a PostgreSQL');
+
+    // Ejecutar schema.sql si existe
+    try {
+      const schemaPath = path.join(__dirname, 'schema.sql');
+      const schemaSQL = await fs.readFile(schemaPath, 'utf8');
+      await client.query(schemaSQL);
+      console.log('✅  Schema aplicado exitosamente');
+    } catch (schemaErr) {
+      console.error('❌  Error al aplicar schema:', schemaErr.message);
+    }
+
+    client.release();
+  } catch (err) {
+    console.error('❌  Error de conexión a DB:', err.message);
+  }
+})();
 
 // ── Helpers ──────────────────────────────────────────────────
 function validarCita(body) {
