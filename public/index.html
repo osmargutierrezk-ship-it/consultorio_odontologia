@@ -1,690 +1,800 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LumiPlus – Clínica Dental & Psicológica</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LumiPlus — Clínica Dental y Psicológica</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml" />
 
-<style>
-/* ══════════════════════════════════════════
-   VARIABLES & RESET
-══════════════════════════════════════════ */
-:root {
-  --gold:        #C5973A;
-  --gold-light:  #E8C87A;
-  --gold-pale:   #F5EDD9;
-  --green:       #6B8F6E;
-  --green-light: #A8C4AB;
-  --green-pale:  #EBF2EC;
-  --dark:        #1A1A1A;
-  --mid:         #5A5A5A;
-  --light:       #F8F7F4;
-  --white:       #FFFFFF;
-  --radius:      12px;
-  --shadow:      0 8px 32px rgba(0,0,0,.10);
-  --trans:       .3s cubic-bezier(.4,0,.2,1);
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  /* active-tab colours updated by JS */
-  --tab-accent:  var(--gold);
-  --tab-pale:    var(--gold-pale);
-}
+  <style>
+    /* ── Reset & Base ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green-dark:   #1B4E3B;
+      --green-mid:    #2D6A4F;
+      --green-soft:   #52B788;
+      --green-pale:   #B7E4C7;
+      --green-tint:   #EAF5EE;
+      --gold:         #C9A84C;
+      --gold-light:   #E8C96A;
+      --gold-pale:    #F5E9C2;
+      --cream:        #F7F3EE;
+      --cream-dark:   #EDE8DF;
+      --text:         #1A1A1A;
+      --text-muted:   #6B6860;
+      --white:        #FFFFFF;
+      --shadow-sm:    0 2px 12px rgba(27,78,59,0.08);
+      --shadow-md:    0 8px 32px rgba(27,78,59,0.12);
+      --shadow-lg:    0 20px 60px rgba(27,78,59,0.16);
+      --radius:       16px;
+      --radius-sm:    8px;
+      --transition:   0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; }
 
-body {
-  font-family: 'Jost', sans-serif;
-  background: var(--light);
-  color: var(--dark);
-  min-height: 100vh;
-}
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-/* ══════════════════════════════════════════
-   HEADER
-══════════════════════════════════════════ */
-header {
-  background: var(--white);
-  border-bottom: 1px solid rgba(197,151,58,.18);
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 16px rgba(0,0,0,.06);
-}
+    /* ── Background Pattern ──────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(82, 183, 136, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(201, 168, 76, 0.05) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231B4E3B' fill-opacity='0.025'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
 
-.header-inner {
-  max-width: 1100px; margin: 0 auto;
-  padding: 0 24px;
-  display: flex; align-items: center; gap: 20px;
-  height: 72px;
-}
+    /* ── Header / Hero ──────────────────────────────────────────── */
+    .site-header {
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(160deg, var(--green-dark) 0%, var(--green-mid) 60%, #3D7A5F 100%);
+      padding: 60px 24px 80px;
+      text-align: center;
+      overflow: hidden;
+    }
 
-/* ── SVG Logo (recreado de la tarjeta) ── */
-.logo-wrap { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .site-header::before {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--cream);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
 
-.logo-svg { width: 46px; height: 46px; flex-shrink: 0; }
+    .site-header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Ccircle cx='40' cy='40' r='30' stroke='%23ffffff' stroke-opacity='0.03' stroke-width='1'/%3E%3Ccircle cx='40' cy='40' r='20' stroke='%23ffffff' stroke-opacity='0.03' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E") repeat;
+      pointer-events: none;
+    }
 
-.logo-text { line-height: 1.1; }
-.logo-text .brand  { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--dark); letter-spacing: .5px; }
-.logo-text .tagline { font-size: 10px; font-weight: 300; color: var(--mid); letter-spacing: 2px; text-transform: uppercase; }
+    .header-content {
+      position: relative;
+      z-index: 2;
+      max-width: 600px;
+      margin: 0 auto;
+      animation: fadeDown 0.8s ease both;
+    }
 
-.header-contact {
-  margin-left: auto;
-  display: flex; align-items: center; gap: 24px;
-  font-size: 13px; color: var(--mid);
-}
-.header-contact a { color: var(--mid); text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color var(--trans); }
-.header-contact a:hover { color: var(--gold); }
-.header-contact .phone { font-weight: 600; font-size: 14px; color: var(--dark); }
+    .logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      border-radius: 50%;
+      border: 2px solid rgba(201,168,76,0.4);
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
 
-/* ══════════════════════════════════════════
-   HERO BANNER
-══════════════════════════════════════════ */
-.hero {
-  background: linear-gradient(135deg, #1a1612 0%, #2d2418 50%, #1a1a18 100%);
-  padding: 64px 24px;
-  text-align: center;
-  position: relative; overflow: hidden;
-}
-.hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 80%, rgba(197,151,58,.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(32px, 5vw, 52px);
-  font-weight: 300; color: var(--white);
-  letter-spacing: 2px; margin-bottom: 12px;
-}
-.hero h1 em { color: var(--gold-light); font-style: normal; font-weight: 600; }
-.hero p { font-size: 15px; color: rgba(255,255,255,.6); font-weight: 300; letter-spacing: 1px; }
-.hero-divider {
-  width: 60px; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  margin: 20px auto 0;
-}
+    .logo-wrap img { width: 64px; height: 64px; }
 
-/* ══════════════════════════════════════════
-   TAB NAVIGATION
-══════════════════════════════════════════ */
-.tab-nav {
-  background: var(--white);
-  display: flex;
-  max-width: 1100px; margin: 0 auto;
-  border-bottom: 2px solid #EBEBEB;
-}
-.tab-nav-wrapper { background: var(--white); border-bottom: 2px solid #EBEBEB; }
+    .site-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 300;
+      color: var(--white);
+      letter-spacing: 0.05em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
 
-.tab-btn {
-  flex: 1; padding: 20px 16px;
-  border: none; background: transparent; cursor: pointer;
-  font-family: 'Jost', sans-serif;
-  font-size: 14px; font-weight: 500; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--mid);
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  border-bottom: 3px solid transparent; margin-bottom: -2px;
-  transition: all var(--trans); position: relative;
-}
-.tab-btn svg { width: 20px; height: 20px; }
-.tab-btn:hover { color: var(--dark); background: var(--gold-pale); }
+    .site-title span { color: var(--gold-light); font-style: italic; }
 
-.tab-btn.active[data-tab="dental"]  { color: var(--gold);  border-bottom-color: var(--gold);  background: var(--gold-pale); }
-.tab-btn.active[data-tab="psico"]   { color: var(--green); border-bottom-color: var(--green); background: var(--green-pale); }
+    .gold-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 16px auto;
+    }
 
-/* ══════════════════════════════════════════
-   MAIN CONTENT
-══════════════════════════════════════════ */
-main { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
+    .site-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.75);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
 
-.tab-panel { display: none; animation: fadeUp .4s ease; }
-.tab-panel.active { display: block; }
+    /* ── Main Layout ────────────────────────────────────────────── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+    /* ── Tabs ────────────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      background: var(--white);
+      border-radius: 50px;
+      padding: 6px;
+      margin: 40px auto 40px;
+      max-width: 440px;
+      box-shadow: var(--shadow-sm);
+      gap: 4px;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
 
-/* ── Clinic intro card ── */
-.clinic-header {
-  display: grid; grid-template-columns: 1fr auto;
-  gap: 32px; align-items: start;
-  background: var(--white); border-radius: var(--radius);
-  padding: 36px; margin-bottom: 40px;
-  box-shadow: var(--shadow);
-  border-left: 5px solid var(--tab-accent);
-}
-#dental  .clinic-header { border-left-color: var(--gold); }
-#psico   .clinic-header { border-left-color: var(--green); }
+    .tab-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      background: transparent;
+      border-radius: 50px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: var(--transition);
+      white-space: nowrap;
+    }
 
-.clinic-title { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 600; margin-bottom: 4px; }
-.clinic-doctor { font-size: 13px; color: var(--mid); font-weight: 300; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
-.clinic-doctor strong { font-weight: 600; font-size: 17px; color: var(--dark); letter-spacing: .5px; }
+    .tab-btn.active {
+      background: var(--green-dark);
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(27,78,59,0.3);
+    }
 
-.clinic-info { display: flex; flex-direction: column; gap: 10px; }
-.info-row { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--mid); }
-.info-row a { color: inherit; text-decoration: none; transition: color var(--trans); }
-.info-row a:hover { color: var(--gold); }
-.info-icon { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+    /* ── Panel Base ─────────────────────────────────────────────── */
+    .panel { display: none; animation: fadeUp 0.4s ease both; }
+    .panel.active { display: block; }
 
-.clinic-badge {
-  background: var(--gold-pale); border-radius: var(--radius);
-  padding: 20px 24px; text-align: center; min-width: 160px;
-  font-size: 12px; color: var(--mid); letter-spacing: 1px; text-transform: uppercase;
-}
-#psico .clinic-badge { background: var(--green-pale); }
-.clinic-badge .badge-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--gold); font-weight: 600; margin-bottom: 4px; display: block; }
-#psico .clinic-badge .badge-name { color: var(--green); }
+    /* ── Card ────────────────────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(27,78,59,0.06);
+    }
 
-/* Social links */
-.social-links { display: flex; gap: 12px; margin-top: 14px; }
-.social-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 14px; border-radius: 99px;
-  font-size: 12px; font-weight: 500;
-  text-decoration: none; letter-spacing: .5px;
-  transition: all var(--trans);
-}
-.social-link.fb  { background: #EEF2FF; color: #4267B2; }
-.social-link.ig  { background: #FFF0F5; color: #C13584; }
-.social-link:hover { filter: brightness(.92); transform: translateY(-1px); }
+    .card__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.875rem;
+      font-weight: 500;
+      color: var(--green-dark);
+      margin-bottom: 6px;
+    }
 
-/* ══════════════════════════════════════════
-   APPOINTMENT FORM
-══════════════════════════════════════════ */
-.form-card {
-  background: var(--white); border-radius: var(--radius);
-  padding: 40px; box-shadow: var(--shadow);
-}
+    .card__subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
 
-.form-section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 26px; font-weight: 600; margin-bottom: 6px;
-}
-.form-section-sub { font-size: 13px; color: var(--mid); margin-bottom: 32px; letter-spacing: .5px; }
+    /* ── Form ────────────────────────────────────────────────────── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
 
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.form-grid .span2 { grid-column: span 2; }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-.field-group { display: flex; flex-direction: column; gap: 6px; }
-.field-group label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); }
+    .form-group--full { grid-column: 1 / -1; }
 
-.field-group input,
-.field-group select,
-.field-group textarea {
-  padding: 12px 16px; border-radius: 8px;
-  border: 1.5px solid #E5E5E5;
-  font-family: 'Jost', sans-serif; font-size: 14px; color: var(--dark);
-  background: var(--white); transition: border-color var(--trans), box-shadow var(--trans);
-  outline: none; width: 100%;
-}
-.field-group textarea { resize: vertical; min-height: 90px; }
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--green-dark);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
 
-#dental  .field-group input:focus,
-#dental  .field-group select:focus,
-#dental  .field-group textarea:focus { border-color: var(--gold);  box-shadow: 0 0 0 3px rgba(197,151,58,.12); }
-#psico   .field-group input:focus,
-#psico   .field-group select:focus,
-#psico   .field-group textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(107,143,110,.12); }
+    .form-input,
+    .form-select {
+      padding: 14px 16px;
+      border: 1.5px solid var(--cream-dark);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--cream);
+      transition: var(--transition);
+      appearance: none;
+      outline: none;
+    }
 
-.submit-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 14px 36px; border: none; border-radius: 8px;
-  font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 600;
-  letter-spacing: 1px; text-transform: uppercase;
-  cursor: pointer; margin-top: 8px; transition: all var(--trans);
-}
-#dental  .submit-btn { background: var(--gold);  color: var(--white); }
-#psico   .submit-btn { background: var(--green); color: var(--white); }
-.submit-btn:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.15); }
-.submit-btn:active { transform: translateY(0); }
-.submit-btn svg { width: 18px; height: 18px; }
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--green-soft);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(82,183,136,0.12);
+    }
 
-/* ── Toast notification ── */
-.toast {
-  position: fixed; bottom: 28px; right: 28px;
-  padding: 14px 22px; border-radius: var(--radius);
-  background: var(--dark); color: var(--white);
-  font-size: 14px; font-weight: 500;
-  box-shadow: 0 8px 32px rgba(0,0,0,.25);
-  transform: translateY(80px); opacity: 0;
-  transition: all .4s cubic-bezier(.4,0,.2,1);
-  z-index: 999; display: flex; align-items: center; gap: 10px;
-  max-width: 340px;
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.success { background: #1A6B3C; }
-.toast.error   { background: #8B1A1A; }
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%232D6A4F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
 
-/* ══════════════════════════════════════════
-   FOOTER
-══════════════════════════════════════════ */
-footer {
-  background: var(--dark); color: rgba(255,255,255,.5);
-  text-align: center; padding: 28px 24px;
-  font-size: 12px; letter-spacing: 1px;
-}
-footer a { color: var(--gold-light); text-decoration: none; }
+    /* Consulta type cards */
+    .tipo-consulta-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
 
-/* ══════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════ */
-@media (max-width: 768px) {
-  .clinic-header { grid-template-columns: 1fr; }
-  .clinic-badge  { display: none; }
-  .form-grid     { grid-template-columns: 1fr; }
-  .form-grid .span2 { grid-column: span 1; }
-  .header-contact .address { display: none; }
-}
-</style>
+    .tipo-consulta-label {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .tipo-consulta-label input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+    }
+
+    .tipo-consulta-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 16px;
+      border: 2px solid var(--cream-dark);
+      border-radius: var(--radius-sm);
+      background: var(--cream);
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .tipo-consulta-card__icon { font-size: 2rem; line-height: 1; }
+
+    .tipo-consulta-card__name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .tipo-consulta-label input:checked + .tipo-consulta-card {
+      border-color: var(--green-mid);
+      background: var(--green-tint);
+      box-shadow: 0 4px 12px rgba(45,106,79,0.15);
+    }
+
+    .tipo-consulta-label input:checked + .tipo-consulta-card .tipo-consulta-card__name {
+      color: var(--green-dark);
+    }
+
+    .tipo-consulta-label:hover .tipo-consulta-card { border-color: var(--green-soft); }
+
+    /* ── Notification checkbox ───────────────────────────────────── */
+    .notif-block {
+      background: linear-gradient(135deg, var(--green-tint), var(--gold-pale));
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      border: 1px solid rgba(201,168,76,0.2);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-label input[type="checkbox"] { display: none; }
+
+    .custom-checkbox {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      border: 2px solid var(--green-mid);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      background: var(--white);
+    }
+
+    .custom-checkbox::after {
+      content: '';
+      width: 10px;
+      height: 6px;
+      border-left: 2.5px solid white;
+      border-bottom: 2.5px solid white;
+      transform: rotate(-45deg) translateY(-2px);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .checkbox-label input:checked + .custom-checkbox {
+      background: var(--green-mid);
+    }
+    .checkbox-label input:checked + .custom-checkbox::after { opacity: 1; }
+
+    .checkbox-text {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--green-dark);
+    }
+
+    .notif-hint {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding-left: 34px;
+      display: none;
+    }
+
+    .notif-hint.visible { display: block; }
+
+    /* ── Submit Button ───────────────────────────────────────────── */
+    .btn-submit {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--green-mid), var(--green-dark));
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: 0.02em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--gold), #B8941A);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-submit:hover::before { opacity: 1; }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(27,78,59,0.3); }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+    .btn-submit span { position: relative; z-index: 1; }
+
+    /* ── My Appointments Section ────────────────────────────────── */
+    #my-appointments-section {
+      display: none;
+      margin-top: 40px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    #my-appointments-section.visible { display: block; }
+
+    /* Search section is inside the panel */
+    .search-card {
+      margin-bottom: 24px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .search-row .form-input { flex: 1; }
+
+    .btn-secondary {
+      padding: 14px 24px;
+      background: var(--green-dark);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-secondary:hover { background: var(--green-mid); transform: translateY(-1px); }
+
+    /* Appointment cards */
+    .appointments-list { display: flex; flex-direction: column; gap: 16px; }
+
+    .appointment-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid rgba(27,78,59,0.08);
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .appointment-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .appointment-card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, var(--green-tint), var(--white));
+      border-bottom: 1px solid rgba(27,78,59,0.06);
+    }
+
+    .appointment-card__tipo {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--green-dark);
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .status-badge--pendiente { background: var(--gold-pale); color: #8B6914; }
+    .status-badge--aceptada  { background: var(--green-pale); color: var(--green-dark); }
+    .status-badge--rechazada { background: #FFEAEA; color: #C62828; }
+
+    .appointment-card__body { padding: 20px; }
+
+    .info-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(27,78,59,0.05);
+    }
+
+    .info-item:last-child { border-bottom: none; }
+
+    .info-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      min-width: 80px;
+    }
+
+    .info-value {
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Empty / loading states */
+    .appointments-empty {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+
+    .appointments-empty__icon { font-size: 3rem; margin-bottom: 12px; }
+
+    .appointments-loading {
+      display: flex;
+      justify-content: center;
+      padding: 48px;
+    }
+
+    /* ── Spinner ─────────────────────────────────────────────────── */
+    .btn-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    .spinner-large {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--green-pale);
+      border-top-color: var(--green-mid);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ── Toast System ────────────────────────────────────────────── */
+    #toast-container {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 360px;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transform: translateX(calc(100% + 30px));
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      border-left: 4px solid var(--green-mid);
+    }
+
+    .toast--success { border-left-color: var(--green-mid); }
+    .toast--error   { border-left-color: #E53935; }
+    .toast--warning { border-left-color: var(--gold); }
+    .toast--info    { border-left-color: #1976D2; }
+
+    .toast--visible { transform: translateX(0); opacity: 1; }
+
+    .toast--hidden  { transform: translateX(calc(100% + 30px)); opacity: 0; }
+
+    .toast__icon { font-size: 1.1rem; }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    .site-footer {
+      position: relative;
+      z-index: 1;
+      background: var(--green-dark);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 32px;
+      font-size: 0.85rem;
+    }
+
+    .site-footer strong { color: var(--gold-light); }
+
+    /* ── Animations ─────────────────────────────────────────────── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .card { padding: 24px 20px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group--full { grid-column: 1; }
+      .tipo-consulta-group { grid-template-columns: 1fr 1fr; }
+      .site-title { font-size: 2.8rem; }
+      .search-row { flex-direction: column; }
+      #toast-container { left: 16px; right: 16px; bottom: 16px; max-width: none; }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- ══════════════════ HEADER ══════════════════ -->
-<header>
-  <div class="header-inner">
-
-    <a href="#" class="logo-wrap">
-      <img src="logo.png" alt="LumiPlus" class="logo-svg" />
-      <div class="logo-text">
-        <div class="brand">LumiPlus</div>
-        <div class="tagline">Clínicas de Salud</div>
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-content">
+      <div class="logo-wrap">
+        <img src="/assets/logo.svg" alt="LumiPlus Logo" />
       </div>
-    </a>
+      <h1 class="site-title">Lumi<span>Plus</span></h1>
+      <div class="gold-divider"></div>
+      <p class="site-subtitle">Clínica Dental &amp; Psicológica</p>
+    </div>
+  </header>
 
-    <div class="header-contact">
-      <a href="tel:47117609" class="phone">
-        <!-- phone icon -->
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.87 9.5 19.79 19.79 0 01.76 4.82 2 2 0 012.74 2.63h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.09 10.1a16 16 0 006.29 6.29l.86-.86a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-        4711-7609
-      </a>
-      <a href="#" class="address">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        6ta calle 63-01, Pinares del Norte, zona 18
-      </a>
+  <!-- ── Main ─────────────────────────────────────────────────────── -->
+  <main>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="agendar" role="tab">📅 Agendar Cita</button>
+      <button class="tab-btn" data-tab="mis-citas" role="tab">📋 Mis Citas</button>
     </div>
 
-  </div>
-</header>
+    <!-- ── Panel: Agendar ─────────────────────────────────────────── -->
+    <div class="panel active" data-panel="agendar">
+      <div class="card">
+        <h2 class="card__title">Nueva Cita</h2>
+        <p class="card__subtitle">Completa el formulario para agendar tu consulta</p>
 
-<!-- ══════════════════ HERO ══════════════════ -->
-<div class="hero">
-  <h1>Bienvenido a <em>LumiPlus</em></h1>
-  <p>Atención profesional · Cita previa · Guatemala</p>
-  <div class="hero-divider"></div>
-</div>
+        <form id="appointment-form" novalidate>
+          <div class="form-grid">
 
-<!-- ══════════════════ TABS ══════════════════ -->
-<div class="tab-nav-wrapper">
-  <div class="tab-nav">
+            <!-- Nombre -->
+            <div class="form-group">
+              <label class="form-label" for="nombre">Nombre Completo</label>
+              <input class="form-input" type="text" id="nombre" name="nombre"
+                placeholder="Tu nombre" required autocomplete="name" />
+            </div>
 
-    <button class="tab-btn active" data-tab="dental">
-      <!-- tooth icon -->
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-        <path d="M12 2C9 2 6 4 6 7c0 1.5.5 3 1 4.5C8 14 8 17 9 20c.3 1 1 2 2 2s1.5-.8 1.8-2l.2-.8.2.8c.3 1.2 1 2 1.8 2s1.7-1 2-2c1-3 1-6 2-8.5.5-1.5 1-3 1-4.5C20 4 17 2 12 2z"/>
-      </svg>
-      Clínica Dental
-    </button>
+            <!-- Teléfono -->
+            <div class="form-group">
+              <label class="form-label" for="telefono">Teléfono</label>
+              <input class="form-input" type="tel" id="telefono" name="telefono"
+                placeholder="Ej: 5555-1234" required autocomplete="tel" />
+            </div>
 
-    <button class="tab-btn" data-tab="psico">
-      <!-- brain/mind icon -->
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-        <path d="M9.5 2A2.5 2.5 0 0112 4.5v.5h.5A2.5 2.5 0 0115 7.5c0 .33-.07.64-.19.93A3 3 0 0117 11a3 3 0 01-1.5 2.6V17a2 2 0 01-2 2H10a2 2 0 01-2-2v-3.4A3 3 0 016 11a3 3 0 012.19-2.57A2.5 2.5 0 018 7.5 2.5 2.5 0 0110.5 5H11v-.5A2.5 2.5 0 019.5 2z"/>
-        <line x1="12" y1="19" x2="12" y2="22"/>
-        <line x1="9" y1="22" x2="15" y2="22"/>
-      </svg>
-      Clínica Psicológica
-    </button>
+            <!-- Tipo de consulta -->
+            <div class="form-group form-group--full">
+              <label class="form-label">Tipo de Consulta</label>
+              <div class="tipo-consulta-group">
+                <label class="tipo-consulta-label">
+                  <input type="radio" name="tipo_consulta" value="odontologica" required />
+                  <div class="tipo-consulta-card">
+                    <div class="tipo-consulta-card__icon">🦷</div>
+                    <div class="tipo-consulta-card__name">Odontológica</div>
+                  </div>
+                </label>
+                <label class="tipo-consulta-label">
+                  <input type="radio" name="tipo_consulta" value="psicologica" />
+                  <div class="tipo-consulta-card">
+                    <div class="tipo-consulta-card__icon">🧠</div>
+                    <div class="tipo-consulta-card__name">Psicológica</div>
+                  </div>
+                </label>
+              </div>
+            </div>
 
-  </div>
-</div>
+            <!-- Fecha -->
+            <div class="form-group">
+              <label class="form-label" for="fecha">Fecha</label>
+              <input class="form-input" type="date" id="fecha" name="fecha" required />
+            </div>
 
-<!-- ══════════════════ MAIN ══════════════════ -->
-<main>
+            <!-- Hora -->
+            <div class="form-group">
+              <label class="form-label" for="hora">Hora</label>
+              <select class="form-select" id="hora" name="hora" required>
+                <option value="" disabled selected>Selecciona una hora</option>
+                <option value="08:00">8:00 AM</option>
+                <option value="08:30">8:30 AM</option>
+                <option value="09:00">9:00 AM</option>
+                <option value="09:30">9:30 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="10:30">10:30 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="11:30">11:30 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="12:30">12:30 PM</option>
+                <option value="13:00">1:00 PM</option>
+                <option value="13:30">1:30 PM</option>
+                <option value="14:00">2:00 PM</option>
+                <option value="14:30">2:30 PM</option>
+                <option value="15:00">3:00 PM</option>
+                <option value="15:30">3:30 PM</option>
+                <option value="16:00">4:00 PM</option>
+                <option value="16:30">4:30 PM</option>
+                <option value="17:00">5:00 PM</option>
+              </select>
+            </div>
 
-  <!-- ─────────── PANEL DENTAL ─────────── -->
-  <div id="dental" class="tab-panel active">
+            <!-- Notificaciones -->
+            <div class="form-group form-group--full">
+              <div class="notif-block">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="acepta_notificaciones" name="acepta_notificaciones" />
+                  <span class="custom-checkbox"></span>
+                  <span class="checkbox-text">🔔 Deseo recibir notificaciones cuando mi cita sea aceptada</span>
+                </label>
+                <p class="notif-hint" id="notif-hint">
+                  Se solicitará permiso de notificaciones al enviar el formulario.
+                  Recibirás una alerta cuando tu cita sea confirmada.
+                </p>
+              </div>
+            </div>
 
-    <div class="clinic-header">
-      <div>
-        <div class="clinic-title">Clínica Dental</div>
-        <div class="clinic-doctor">Especialista a cargo: <strong>Dra. Nohemí Argueta</strong> · Odontóloga</div>
+            <!-- Submit -->
+            <div class="form-group form-group--full" style="margin-top: 8px;">
+              <button class="btn-submit" type="submit">
+                <span>✨ Agendar Cita</span>
+              </button>
+            </div>
 
-        <div class="clinic-info">
-          <div class="info-row">
-            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.87 9.5 19.79 19.79 0 01.76 4.82 2 2 0 012.74 2.63h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.09 10.1a16 16 0 006.29 6.29l.86-.86a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-            <span>Tel. <a href="tel:47117609"><strong>4711-7609</strong></a> · Atención con cita previa</span>
           </div>
-          <div class="info-row">
-            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>6ta calle 63-01, Pinares del Norte, zona 18, Guatemala</span>
-          </div>
-          <div class="info-row">
-            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
-            <!-- El href se inserta aquí -->
-            <a href="INSERTAR_URL_DENTAL" target="_blank">Visitar sitio web de la clínica dental</a>
-          </div>
-        </div>
-
-        <div class="social-links">
-          <a href="https://facebook.com/ClinicaLumiPlus" target="_blank" class="social-link fb">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
-            Clínica LumiPlus
-          </a>
-          <a href="https://instagram.com/lumiplus_gt" target="_blank" class="social-link ig">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            @lumiplus_gt
-          </a>
-        </div>
-      </div>
-
-      <div class="clinic-badge">
-        <span class="badge-name">LumiPlus</span>
-        Clínica Dental
-        <br><br>
-        <small style="font-size:11px">Sonrisas que<br>iluminan</small>
-      </div>
-    </div>
-
-    <!-- FORMULARIO DENTAL -->
-    <div class="form-card">
-      <div class="form-section-title">Agendar Cita Dental</div>
-      <div class="form-section-sub">Complete sus datos y nos comunicaremos para confirmar su cita.</div>
-
-      <form id="formDental">
-        <input type="hidden" name="tipo_consulta" value="odontologica" />
-        <div class="form-grid">
-
-          <div class="field-group">
-            <label>Nombre *</label>
-            <input type="text" name="nombre" placeholder="Su nombre" required />
-          </div>
-          <div class="field-group">
-            <label>Apellido *</label>
-            <input type="text" name="apellido" placeholder="Su apellido" required />
-          </div>
-
-          <div class="field-group">
-            <label>Teléfono *</label>
-            <input type="tel" name="telefono" placeholder="0000-0000" required />
-          </div>
-          <div class="field-group">
-            <label>Correo electrónico</label>
-            <input type="email" name="email" placeholder="correo@ejemplo.com" />
-          </div>
-
-          <div class="field-group">
-            <label>Fecha de la cita *</label>
-            <input type="date" name="fecha_cita" required />
-          </div>
-          <div class="field-group">
-            <label>Hora preferida *</label>
-            <input type="time" name="hora_cita" required />
-          </div>
-
-          <div class="field-group span2">
-            <label>Motivo de la consulta</label>
-            <textarea name="motivo" placeholder="Describa brevemente el motivo de su visita…"></textarea>
-          </div>
-
-        </div>
-        <button type="submit" class="submit-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
-          Confirmar Cita Dental
-        </button>
-      </form>
-    </div>
-
-  </div><!-- /dental -->
-
-
-  <!-- ─────────── PANEL PSICOLÓGICO ─────────── -->
-  <div id="psico" class="tab-panel">
-
-    <div class="clinic-header">
-      <div>
-        <div class="clinic-title">Clínica Psicológica</div>
-        <div class="clinic-doctor">Especialista a cargo: <strong>Lic. Aarón Chávez</strong> · Psicólogo Clínico</div>
-
-        <div class="clinic-info">
-          <div class="info-row">
-            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.87 9.5 19.79 19.79 0 01.76 4.82 2 2 0 012.74 2.63h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.09 10.1a16 16 0 006.29 6.29l.86-.86a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-            <span>Tel. <a href="tel:47117609"><strong>4711-7609</strong></a> · Atención con cita previa</span>
-          </div>
-          <div class="info-row">
-            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>6ta calle 63-01, Pinares del Norte, zona 18, Guatemala</span>
-          </div>
-          <div class="info-row">
-            <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
-            <!-- El href se inserta aquí -->
-            <a href="INSERTAR_URL_PSICOLOGICA" target="_blank">Visitar sitio web de la clínica psicológica</a>
-          </div>
-        </div>
-
-        <div class="social-links">
-          <a href="https://facebook.com/ClinicaLumiPlus" target="_blank" class="social-link fb">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
-            Clínica LumiPlus
-          </a>
-          <a href="https://instagram.com/lumiplus_gt" target="_blank" class="social-link ig">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            @lumiplus_gt
-          </a>
-        </div>
-      </div>
-
-      <div class="clinic-badge">
-        <span class="badge-name">LumiPlus</span>
-        Clínica Psicológica
-        <br><br>
-        <small style="font-size:11px">Tu bienestar<br>mental importa</small>
+        </form>
       </div>
     </div>
 
-    <!-- FORMULARIO PSICOLÓGICO -->
-    <div class="form-card">
-      <div class="form-section-title">Agendar Cita Psicológica</div>
-      <div class="form-section-sub">Su privacidad es nuestra prioridad. La información es completamente confidencial.</div>
+    <!-- ── Panel: Mis Citas ───────────────────────────────────────── -->
+    <div class="panel" data-panel="mis-citas">
+      <div class="card search-card">
+        <h2 class="card__title">Mis Citas</h2>
+        <p class="card__subtitle">Ingresa tu número de teléfono para consultar tus citas</p>
 
-      <form id="formPsico">
-        <input type="hidden" name="tipo_consulta" value="psicologica" />
-        <div class="form-grid">
-
-          <div class="field-group">
-            <label>Nombre *</label>
-            <input type="text" name="nombre" placeholder="Su nombre" required />
+        <form id="search-form" novalidate>
+          <div class="search-row">
+            <input class="form-input" type="tel" id="search-telefono"
+              placeholder="Ej: 5555-1234" required />
+            <button class="btn-secondary" type="submit">Buscar</button>
           </div>
-          <div class="field-group">
-            <label>Apellido *</label>
-            <input type="text" name="apellido" placeholder="Su apellido" required />
-          </div>
-
-          <div class="field-group">
-            <label>Teléfono *</label>
-            <input type="tel" name="telefono" placeholder="0000-0000" required />
-          </div>
-          <div class="field-group">
-            <label>Correo electrónico</label>
-            <input type="email" name="email" placeholder="correo@ejemplo.com" />
-          </div>
-
-          <div class="field-group">
-            <label>Fecha de la cita *</label>
-            <input type="date" name="fecha_cita" required />
-          </div>
-          <div class="field-group">
-            <label>Hora preferida *</label>
-            <input type="time" name="hora_cita" required />
-          </div>
-
-          <div class="field-group span2">
-            <label>Motivo de consulta (opcional)</label>
-            <textarea name="motivo" placeholder="Si lo desea, describa brevemente el motivo de su consulta…"></textarea>
-          </div>
-
-        </div>
-        <button type="submit" class="submit-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
-          Confirmar Cita Psicológica
-        </button>
-      </form>
-    </div>
-
-  </div><!-- /psico -->
-
-</main>
-
-<!-- ══════════════════ MAPA ══════════════════ -->
-<section class="map-section">
-  <div class="map-inner">
-    <div class="map-label">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      <div>
-        <strong>Encuéntranos</strong>
-        <span>6ta calle 63-01, Pinares del Norte, zona 18, Guatemala</span>
+        </form>
       </div>
-      <a
-        href="https://www.google.com/maps/search/6ta+calle+63-01+Pinares+del+Norte+zona+18+Guatemala"
-        target="_blank"
-        class="maps-btn"
-      >
-        Abrir en Google Maps
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      </a>
+
+      <div id="appointments-list" class="appointments-list">
+        <div class="appointments-empty">
+          <div class="appointments-empty__icon">🔍</div>
+          <p>Ingresa tu teléfono para ver tus citas</p>
+        </div>
+      </div>
     </div>
-    <div class="map-embed-wrap">
-      <iframe
-        title="Ubicación LumiPlus"
-        width="100%" height="100%"
-        style="border:0"
-        loading="lazy"
-        allowfullscreen
-        referrerpolicy="no-referrer-when-downgrade"
-        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBDJ3-wWyceTMI3p7GdzMC-S6M3xwt2-fY&q=14.6631087,-90.4312681&zoom=17"
-      ></iframe>
-    </div>
-  </div>
-</section>
 
-<style>
-.map-section {
-  background: var(--white);
-  border-top: 1px solid #EBEBEB;
-  padding: 0;
-}
-.map-inner {
-  max-width: 1100px; margin: 0 auto;
-  display: grid; grid-template-columns: 340px 1fr;
-}
-.map-label {
-  padding: 36px 32px;
-  display: flex; flex-direction: column; gap: 14px;
-  justify-content: center;
-  border-right: 1px solid #EBEBEB;
-}
-.map-label svg { flex-shrink: 0; color: var(--gold); }
-.map-label > div { display: flex; align-items: flex-start; gap: 12px; }
-.map-label strong { display: block; font-size: 16px; font-family: 'Cormorant Garamond', serif; font-weight: 600; margin-bottom: 4px; }
-.map-label span { font-size: 13px; color: var(--mid); line-height: 1.5; }
-.maps-btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 10px 18px; border-radius: 8px;
-  background: var(--gold-pale); color: var(--gold);
-  font-size: 13px; font-weight: 600; text-decoration: none;
-  letter-spacing: .5px; transition: all var(--trans);
-  width: fit-content;
-}
-.maps-btn:hover { background: var(--gold); color: var(--white); }
-.map-embed-wrap {
-  height: 300px;
-  background: #eee;
-}
-@media (max-width: 768px) {
-  .map-inner { grid-template-columns: 1fr; }
-  .map-label { border-right: none; border-bottom: 1px solid #EBEBEB; padding: 24px; }
-  .map-embed-wrap { height: 240px; }
-}
-</style>
+  </main>
 
-<!-- ══════════════════ FOOTER ══════════════════ -->
-<footer>
-  <p>© 2025 <strong style="color:#E8C87A">LumiPlus</strong> · Clínica Dental &amp; Psicológica · 6ta calle 63-01, Pinares del Norte, zona 18, Guatemala</p>
-  <p style="margin-top:8px">
-    <a href="https://facebook.com/ClinicaLumiPlus">Facebook</a> &nbsp;·&nbsp;
-    <a href="https://instagram.com/lumiplus_gt">Instagram @lumiplus_gt</a>
-  </p>
-</footer>
+  <!-- ── Footer ─────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p><strong>LumiPlus</strong> — Clínica Dental &amp; Psicológica &nbsp;·&nbsp; Todos los derechos reservados &copy; 2025</p>
+  </footer>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
-<!-- ══════════════════ JS ══════════════════ -->
-<script>
-// ── Tab switching ────────────────────────────────────────────
-const tabBtns   = document.querySelectorAll('.tab-btn');
-const tabPanels = document.querySelectorAll('.tab-panel');
-
-tabBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = btn.dataset.tab;
-    tabBtns  .forEach(b => b.classList.remove('active'));
-    tabPanels.forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(target).classList.add('active');
-  });
-});
-
-// ── Toast helper ─────────────────────────────────────────────
-function showToast(msg, type = 'success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className   = `toast show ${type}`;
-  setTimeout(() => t.classList.remove('show'), 4000);
-}
-
-// ── Generic form submit ──────────────────────────────────────
-async function submitCita(formEl) {
-  const data = Object.fromEntries(new FormData(formEl).entries());
-  // Limpiar campos vacíos opcionales
-  Object.keys(data).forEach(k => { if (data[k] === '') delete data[k]; });
-
-  const btn = formEl.querySelector('.submit-btn');
-  btn.disabled = true;
-  btn.style.opacity = '.7';
-
-  try {
-    const res  = await fetch('/api/citas', {
-      method : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body   : JSON.stringify(data),
-    });
-    const json = await res.json();
-
-    if (res.ok) {
-      showToast('✓ ' + json.mensaje, 'success');
-      formEl.reset();
-    } else {
-      showToast('✗ ' + (json.mensaje || 'Error al agendar'), 'error');
-    }
-  } catch {
-    showToast('✗ No se pudo conectar con el servidor.', 'error');
-  } finally {
-    btn.disabled    = false;
-    btn.style.opacity = '1';
-  }
-}
-
-document.getElementById('formDental').addEventListener('submit', e => { e.preventDefault(); submitCita(e.target); });
-document.getElementById('formPsico') .addEventListener('submit', e => { e.preventDefault(); submitCita(e.target); });
-
-// ── Set min date = today ─────────────────────────────────────
-document.querySelectorAll('input[type="date"]').forEach(el => {
-  el.min = new Date().toISOString().split('T')[0];
-});
-</script>
-
+  <script src="/js/app.js"></script>
 </body>
 </html>

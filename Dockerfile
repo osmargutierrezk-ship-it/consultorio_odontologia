@@ -1,53 +1,31 @@
-# ─────────────────────────────────────────────────────────────────
-# Stage 1: Dependencies
-# ─────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS deps
+# ── Build stage ──────────────────────────────────────────────────────────────
+FROM node:20-alpine AS base
 
 WORKDIR /app
 
-# Copy only package files to leverage Docker layer caching
+# Copy package files
 COPY package*.json ./
+COPY prisma ./prisma/
 
-# Install only production dependencies
-RUN npm ci --omit=dev --ignore-scripts && \
-    npm cache clean --force
+# Install all dependencies (including dev for prisma CLI)
+RUN npm install
 
-# ─────────────────────────────────────────────────────────────────
-# Stage 2: Production image
-# ─────────────────────────────────────────────────────────────────
-FROM node:20-alpine AS runner
+# Generate Prisma client
+RUN npx prisma generate
 
-# Security: run as non-root user
-RUN addgroup -g 1001 -S appgroup && \
-    adduser  -u 1001 -S appuser -G appgroup
+# ── Production stage ──────────────────────────────────────────────────────────
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy production node_modules from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+# Copy node_modules and generated client
+COPY --from=base /app/node_modules ./node_modules
 
 # Copy application source
-COPY --chown=appuser:appgroup server.js  ./server.js
-COPY --chown=appuser:appgroup schema.sql ./schema.sql
-COPY --chown=appuser:appgroup public/    ./public/
+COPY . .
 
-# Metadata
-LABEL maintainer="DentalPro DevTeam"
-LABEL version="1.0.0"
-LABEL description="DentalPro Clínica – Web App"
-
-# Environment defaults (override in Render dashboard)
-ENV NODE_ENV=production \
-    PORT=3000
-
+# Expose port
 EXPOSE 3000
 
-# Switch to non-root user
-USER appuser
-
-# Healthcheck for container orchestrators
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost:3000/health || exit 1
-
-# Start the server
+# Start (will run db push + server)
 CMD ["node", "server.js"]
