@@ -49,7 +49,7 @@ function createToastContainer() {
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return null;
   try {
-    const reg = await navigator.serviceWorker.register('/js/sw.js');
+    const reg = await navigator.serviceWorker.register('/sw.js');
     console.log('SW registered:', reg.scope);
     return reg;
   } catch (err) {
