@@ -51,7 +51,7 @@ export default function About() {
               Somos una clínica psicológica y dental en Guatemala, comprometida con el bienestar integral de cada persona que nos visita. Nuestro nombre refleja nuestra misión: <span className="text-primary font-medium">iluminar el camino hacia una vida más plena y saludable</span>.
             </p>
             <p className="font-sans text-sm text-forest/60 leading-relaxed mb-8">
-              Con más de 10 años de experiencia, combinamos la atención en salud mental y dental bajo un mismo techo, con especialistas comprometidos con tu bienestar.
+              Combinamos la atención en salud mental y dental bajo un mismo techo, con especialistas comprometidos con tu bienestar.
             </p>
 
             <div className="grid grid-cols-2 gap-4">
@@ -98,12 +98,6 @@ export default function About() {
                 loading="lazy"
                 onError={(e) => e.target.style.display = 'none'}
               />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white p-8">
-                  <div className="font-display text-6xl font-semibold text-gold/90 mb-2">10+</div>
-                  <div className="font-sans text-sm text-white/80 tracking-wide">Años de experiencia</div>
-                </div>
-              </div>
             </div>
 
             {/* Floating badge */}

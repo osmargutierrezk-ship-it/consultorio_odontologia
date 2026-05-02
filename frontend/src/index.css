@@ -92,9 +92,40 @@
   }
 }
 
+/* Estilos personalizados para las flechas de Swiper */
+:root {
+  --swiper-navigation-size: 24px; /* Tamaño de la flecha */
+  --swiper-theme-color: #1a4d44;  /* Color Verde Bosque de LumiPlus */
+}
+
 .swiper-button-next,
 .swiper-button-prev {
-  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 18px !important;
+  font-weight: bold;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background-color: #d4af37; /* Cambio a Dorado en hover */
+  color: white;
+}
+
+/* Ocultar flechas en móviles si prefieres solo scroll táctil */
+@media (max-width: 640px) {
+  .swiper-button-next,
+  .swiper-button-prev {
+    display: none;
+  }
 }
 
 .swiper-pagination-bullet {
