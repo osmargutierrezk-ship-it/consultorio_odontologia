@@ -141,8 +141,7 @@ export default function ContactPanel() {
           >
             <iframe
               title="LumiPlus location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.234!2d-90.4803!3d14.6349!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDM4JzA1LjYiTiA5MMKwMjgnNDkuMSJX!5e0!3m2!1ses!2sgt!4v1234567890"
-              width="100%"
+              src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d122!2d-90.4316409!3d14.6632818!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sgt!4v1234567890"              width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen
