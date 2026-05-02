@@ -1,212 +1,100 @@
-# 🌿 LumiPlus — Clínica Psicológica y Dental
+# 🌿 LumiPlus — Fullstack Docker (Render Ready)
 
-> Plataforma web full-stack para la clínica LumiPlus en Guatemala City.  
-> Stack: React + Vite · Node/Express · PostgreSQL · Prisma · Docker · Render
+Aplicación fullstack para clínica psicológica y dental, preparada para desplegarse en **Render** con **un solo contenedor Docker**.
+
+## ✅ Cambios de arquitectura aplicados
+
+- Unificación en **single-container fullstack**.
+- El frontend (Vite) se compila dentro del build Docker.
+- Express sirve el build de frontend desde `backend/public`.
+- Eliminado Nginx como capa de producción.
+- Eliminado `docker-compose` del flujo de producción.
+- Configuración para PostgreSQL externa (Render DB) mediante `DATABASE_URL`.
+- Arranque robusto con Prisma (`prisma migrate deploy` al iniciar).
+- Carrusel Hero migrado a **Swiper.js**.
+- Pipeline de assets: copia de `frontend/src/assets` a `frontend/public/assets` antes del build.
+- Middleware de seguridad activo (`helmet`, `cors`, `express-rate-limit`).
 
 ---
 
-## 📦 Estructura del proyecto
+## 📦 Estructura principal
 
-```
+```bash
 lumiplus/
-├── frontend/               # React + Vite + TailwindCSS + Framer Motion
-│   ├── src/
-│   │   ├── components/     # Navbar, Hero, Services, Specialists, Contact, Footer
-│   │   ├── pages/          # HomePage, AppointmentPage
-│   │   └── index.css       # Variables globales + Tailwind
-│   ├── nginx.conf          # Config Nginx para SPA
-│   └── Dockerfile
-├── backend/                # Node.js + Express + Prisma
-│   ├── src/
-│   │   ├── routes/         # services, specialists, appointments, contact
-│   │   └── index.js        # Entry point Express
-│   ├── prisma/
-│   │   ├── schema.prisma
-│   │   └── seed.js
-│   └── Dockerfile
-├── docker-compose.yml
+├── Dockerfile                # Build + runtime fullstack
+├── .dockerignore
 ├── .env.example
-└── README.md
+├── backend/
+│   ├── prisma/
+│   ├── src/
+│   └── package.json
+└── frontend/
+    ├── public/assets/
+    ├── scripts/copyAssets.mjs
+    ├── src/
+    └── package.json
 ```
 
 ---
 
-## 🚀 Inicio rápido (Docker)
+## 🚀 Despliegue en Render (recomendado)
 
-### 1. Clonar y configurar variables
+Crear un **Web Service** en Render usando Docker:
 
-```bash
-git clone https://github.com/tu-usuario/lumiplus.git
-cd lumiplus
+- **Environment**: `Docker`
+- **Root Directory**: `lumiplus` (o la carpeta raíz del proyecto)
+- **Dockerfile Path**: `./Dockerfile`
 
-# Copiar variables de entorno
-cp .env.example .env
-
-# Editar .env con tus valores
-nano .env
-```
-
-### 2. Agregar imágenes
-
-Coloca las imágenes en estas rutas dentro de `frontend/public/`:
-
-```
-frontend/public/
-├── assets/
-│   ├── carrusel/
-│   │   ├── img1.webp   ← Imagen hero 1
-│   │   ├── img2.webp   ← Imagen hero 2
-│   │   └── img3.webp   ← Imagen hero 3
-│   ├── specialists/
-│   │   ├── aaron.webp
-│   │   └── nohemi.webp
-│   └── clinic/
-│       └── interior.webp
-└── favicon.svg
-```
-
-### 3. Levantar con Docker Compose
+### Variables de entorno (Render)
 
 ```bash
-docker-compose up --build
-```
-
-- **Frontend:** http://localhost
-- **Backend API:** http://localhost:3000
-- **Base de datos:** localhost:5432
-
-### 4. Seed de base de datos
-
-```bash
-docker-compose exec backend npm run prisma:seed
-```
-
----
-
-## ☁️ Despliegue en Render
-
-### Backend (Web Service)
-
-| Campo | Valor |
-|---|---|
-| **Runtime** | Node |
-| **Build Command** | `npm ci && npx prisma generate && npx prisma migrate deploy` |
-| **Start Command** | `node src/index.js` |
-| **Root Directory** | `backend` |
-
-**Variables de entorno en Render:**
-```
-DATABASE_URL=postgresql://USER:PASS@HOST:PORT/DB
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DB_NAME
 PORT=3000
-JWT_SECRET=tu_secreto_64_chars
-FRONTEND_URL=https://lumiplus.onrender.com
 NODE_ENV=production
-```
-
-### Frontend (Static Site)
-
-| Campo | Valor |
-|---|---|
-| **Build Command** | `npm ci && npm run build` |
-| **Publish Directory** | `dist` |
-| **Root Directory** | `frontend` |
-
-**Variables de entorno en Render:**
-```
-VITE_API_URL=https://lumiplus-api.onrender.com
+JWT_SECRET=tu_secreto_largo_y_seguro
+FRONTEND_URL=https://tu-servicio.onrender.com
+# opcional para build del frontend
+VITE_API_URL=
 VITE_GOOGLE_MAPS_KEY=tu_google_maps_key
 ```
 
-### Base de datos
-
-Usar **Render PostgreSQL** (plan gratuito disponible).  
-Copiar el **Internal Database URL** como `DATABASE_URL` en el backend.
+> `VITE_API_URL` puede quedar vacío para consumir `/api/*` por mismo dominio.
 
 ---
 
-## 🔌 API Endpoints
-
-| Método | Ruta | Descripción |
-|---|---|---|
-| `GET` | `/health` | Health check |
-| `GET` | `/api/services` | Listar servicios |
-| `GET` | `/api/services/:slug` | Servicio por slug |
-| `GET` | `/api/specialists` | Listar especialistas |
-| `GET` | `/api/specialists/:id` | Especialista por ID |
-| `POST` | `/api/appointments` | Crear cita |
-| `GET` | `/api/contact` | Información de contacto |
-| `POST` | `/api/contact` | Enviar mensaje |
-
-### Ejemplo: Crear cita
-
-```json
-POST /api/appointments
-{
-  "name": "María García",
-  "phone": "5555-1234",
-  "email": "maria@ejemplo.com",
-  "date": "2024-06-15T10:00:00",
-  "service": "Psicología clínica",
-  "message": "Primera consulta"
-}
-```
-
----
-
-## 🎨 Diseño
-
-| Token | Valor |
-|---|---|
-| Primary (verde) | `#3D5A45` |
-| Gold | `#C9A84C` |
-| Beige | `#F5F0E8` |
-| Forest | `#2C3E35` |
-| Fuente display | Cormorant Garamond |
-| Fuente body | DM Sans |
-
----
-
-## 🗺️ Google Maps
-
-1. Obtener API key en [Google Cloud Console](https://console.cloud.google.com/)
-2. Habilitar **Maps JavaScript API** y **Maps Embed API**
-3. Agregar la key como `VITE_GOOGLE_MAPS_KEY` en `.env`
-4. Opcional: reemplazar el iframe en `Contact.jsx` con `@react-google-maps/api`
-
----
-
-## 📱 Funcionalidades
-
-- ✅ Carrusel hero con autoplay (Framer Motion)
-- ✅ Formulario de citas con validación (React Hook Form + Zod)
-- ✅ Animaciones fade-up en scroll (Framer Motion)
-- ✅ Navbar responsive con menú hamburguesa
-- ✅ Mapa integrado (Google Maps iframe)
-- ✅ Botón WhatsApp directo
-- ✅ SEO básico (react-helmet-async)
-- ✅ Rate limiting en API
-- ✅ Lazy loading de imágenes
-- ✅ Manejo de errores en frontend
-
----
-
-## 🛠️ Desarrollo local (sin Docker)
+## 🧪 Ejecución local con Docker
 
 ```bash
-# Backend
-cd backend
-npm install
-cp .env.example .env  # editar DATABASE_URL
-npx prisma migrate dev
-npx prisma db seed
-npm run dev
+docker build -t lumiplus-fullstack .
+docker run --rm -p 3000:3000 --env-file .env lumiplus-fullstack
+```
 
-# Frontend (otra terminal)
-cd frontend
-npm install
-npm run dev
+App disponible en: `http://localhost:3000`
+
+---
+
+## 🛡️ Seguridad y API
+
+- `helmet` para headers de seguridad.
+- `cors` con whitelist configurable por `FRONTEND_URL`.
+- `express-rate-limit` en `/api/*`.
+- Endpoints API disponibles bajo `/api/...`.
+- Frontend SPA servido por Express para rutas no-API.
+
+---
+
+## 📌 Nota sobre assets
+
+Si agregas imágenes en `frontend/src/assets`, durante `npm run build` se copian a `frontend/public/assets` automáticamente.
+
+También puedes colocar assets manualmente en:
+
+```bash
+frontend/public/assets/carrusel/
+frontend/public/assets/specialists/
+frontend/public/assets/clinic/
 ```
 
 ---
 
-*Hecho con ❤️ para LumiPlus — Guatemala City*
+Hecho para despliegue simplificado y estable en Render ✅

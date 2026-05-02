@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Calendar, Users, ChevronLeft, ChevronRight } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Calendar, Users } from 'lucide-react'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay, Pagination, Navigation, A11y } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import 'swiper/css/navigation'
 
 const slides = [
   {
@@ -21,87 +25,45 @@ const slides = [
   },
 ]
 
-const slideVariants = {
-  enter: (dir) => ({
-    x: dir > 0 ? '100%' : '-100%',
-    opacity: 0,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-  },
-  exit: (dir) => ({
-    x: dir > 0 ? '-100%' : '100%',
-    opacity: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-  }),
-}
-
 export default function Hero() {
-  const [[current, direction], setSlide] = useState([0, 0])
-  const [imgErrors, setImgErrors] = useState({})
-
-  const go = useCallback((newIdx, dir) => {
-    setSlide([newIdx, dir])
-  }, [])
-
-  const next = useCallback(() => {
-    go((current + 1) % slides.length, 1)
-  }, [current, go])
-
-  const prev = useCallback(() => {
-    go((current - 1 + slides.length) % slides.length, -1)
-  }, [current, go])
-
-  useEffect(() => {
-    const timer = setInterval(next, 5000)
-    return () => clearInterval(timer)
-  }, [next])
-
   return (
     <section id="inicio" className="relative min-h-screen flex items-center overflow-hidden pt-16 md:pt-20">
-      {/* Carousel Background */}
       <div className="absolute inset-0 z-0">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.div
-            key={current}
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            className="absolute inset-0"
-          >
-            {imgErrors[current] ? (
-              /* Fallback gradient when image not found */
-              <div className={`absolute inset-0 bg-gradient-to-br ${slides[current].fallbackBg}`} />
-            ) : (
-              <img
-                src={slides[current].image}
-                alt={`Slide ${current + 1}`}
-                className="w-full h-full object-cover"
-                loading={current === 0 ? 'eager' : 'lazy'}
-                onError={() => setImgErrors(prev => ({ ...prev, [current]: true }))}
-              />
-            )}
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-forest/75 via-forest/50 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-forest/40 via-transparent to-transparent" />
-          </motion.div>
-        </AnimatePresence>
+        <Swiper
+          modules={[Autoplay, Pagination, Navigation, A11y]}
+          className="h-full"
+          loop
+          speed={900}
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          pagination={{ clickable: true }}
+          navigation
+          a11y={{ enabled: true }}
+        >
+          {slides.map((slide, idx) => (
+            <SwiperSlide key={slide.id}>
+              <div className="relative w-full h-screen min-h-screen">
+                <img
+                  src={slide.image}
+                  alt={`Slide ${idx + 1}`}
+                  className="w-full h-full object-cover"
+                  loading={idx === 0 ? 'eager' : 'lazy'}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                    const fallback = e.currentTarget.nextElementSibling
+                    if (fallback) fallback.classList.remove('hidden')
+                  }}
+                />
+                <div className={`hidden absolute inset-0 bg-gradient-to-br ${slide.fallbackBg}`} />
+                <div className="absolute inset-0 bg-gradient-to-r from-forest/75 via-forest/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-forest/40 via-transparent to-transparent" />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
 
-      {/* Decorative diagonal element */}
       <div className="absolute left-0 top-0 bottom-0 w-2 bg-gold z-10" />
-      <div className="absolute left-0 top-0 w-0 h-0 z-10"
-        style={{
-          borderLeft: '120px solid rgba(201,168,76,0.15)',
-          borderBottom: '120vh solid transparent',
-        }}
-      />
 
-      {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 md:py-32">
         <div className="max-w-xl">
           <motion.div
@@ -151,61 +113,6 @@ export default function Hero() {
           </motion.div>
         </div>
       </div>
-
-      {/* Carousel Controls */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4">
-        <button
-          onClick={prev}
-          className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/40 transition-all flex items-center justify-center"
-          aria-label="Anterior"
-        >
-          <ChevronLeft size={18} />
-        </button>
-
-        <div className="flex gap-2">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => go(i, i > current ? 1 : -1)}
-              className={`transition-all duration-300 rounded-full ${
-                i === current
-                  ? 'w-6 h-2 bg-gold'
-                  : 'w-2 h-2 bg-white/50 hover:bg-white/80'
-              }`}
-              aria-label={`Ir a slide ${i + 1}`}
-            />
-          ))}
-        </div>
-
-        <button
-          onClick={next}
-          className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/40 transition-all flex items-center justify-center"
-          aria-label="Siguiente"
-        >
-          <ChevronRight size={18} />
-        </button>
-      </div>
-
-      {/* Stats strip */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
-        className="absolute bottom-0 right-0 z-10 hidden md:flex"
-      >
-        <div className="bg-white/10 backdrop-blur-md border-t border-l border-white/20 rounded-tl-2xl px-8 py-5 flex gap-8">
-          {[
-            { num: '10+', label: 'Años de experiencia' },
-            { num: '500+', label: 'Pacientes atendidos' },
-            { num: '2',   label: 'Especialidades' },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="font-display text-2xl font-semibold text-gold">{stat.num}</div>
-              <div className="font-sans text-xs text-white/70 mt-0.5">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
     </section>
   )
 }
