@@ -36,8 +36,7 @@ export default function AppointmentForm({ specialistId }) {
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-      const API = import.meta.env.VITE_API_URL || ''
-      const res = await fetch(`${API}/api/appointments`, {
+      const res = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...data, specialistId }),
