@@ -17,7 +17,7 @@ model Specialist {
   specialty    String
   image        String?
   phone        String?
-  email        String?
+  email        String?  @unique   // ← agregar @unique
   bio          String?
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())

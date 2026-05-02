@@ -45,6 +45,7 @@ async function main() {
       role: 'Psicólogo Clínico',
       specialty: 'Psicología',
       phone: '4711-7609',
+      email: 'aaron@lumiplus.com',
       bio: 'Especialista en terapia cognitivo-conductual con más de 10 años de experiencia.',
       image: '/assets/specialists/aaron.webp',
     },
@@ -53,6 +54,7 @@ async function main() {
       role: 'Odontóloga',
       specialty: 'Odontología',
       phone: '4711-7609',
+      email: 'nohemi@lumiplus.com',
       bio: 'Especialista en odontología estética y restaurativa con enfoque en el bienestar del paciente.',
       image: '/assets/specialists/nohemi.webp',
     },
@@ -60,7 +62,7 @@ async function main() {
 
   for (const specialist of specialists) {
     await prisma.specialist.upsert({
-      where: { id: specialists.indexOf(specialist) + 1 },
+      where: { email: specialist.email },
       update: {},
       create: specialist,
     });

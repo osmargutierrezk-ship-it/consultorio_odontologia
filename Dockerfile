@@ -56,4 +56,4 @@ EXPOSE 3000
 # Migrar DB automáticamente y arrancar
 # CMD ["sh", "-c", "npx prisma migrate deploy && node src/index.js"]
 # En el Dockerfile
-CMD ["sh", "-c", "npx prisma db push && npx prisma db seed && node src/index.js"]
+CMD ["sh", "-c", "npx prisma db push && node prisma/seed.js && node src/index.js"]
