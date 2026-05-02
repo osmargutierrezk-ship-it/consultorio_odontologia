@@ -111,8 +111,8 @@ export default function About() {
                 <Award size={18} className="text-gold" />
               </div>
               <div>
-                <div className="font-display text-lg font-semibold text-primary">500+</div>
-                <div className="font-sans text-xs text-forest/60">Pacientes satisfechos</div>
+                <div className="font-display text-lg font-semibold text-primary">Clinica</div>
+                <div className="font-sans text-xs text-forest/60">Visitanos!</div>
               </div>
             </motion.div>
 
