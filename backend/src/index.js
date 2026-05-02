@@ -19,7 +19,56 @@ const allowedOrigins = (process.env.FRONTEND_URL || '')
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+
+        // Permitir JS de Google Maps
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://maps.googleapis.com",
+          "https://www.google.com"
+        ],
+
+        // Permitir iframes (MAPA)
+        frameSrc: [
+          "'self'",
+          "https://www.google.com"
+        ],
+
+        // Permitir imágenes del mapa
+        imgSrc: [
+          "'self'",
+          "data:",
+          "https://maps.googleapis.com",
+          "https://maps.gstatic.com"
+        ],
+
+        // Permitir requests (API maps)
+        connectSrc: [
+          "'self'",
+          "https://maps.googleapis.com"
+        ],
+
+        // estilos (Google usa inline styles)
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://fonts.googleapis.com"
+        ],
+
+        // fuentes
+        fontSrc: [
+          "'self'",
+          "https://fonts.gstatic.com"
+        ],
+      },
+    },
+  })
+);
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
