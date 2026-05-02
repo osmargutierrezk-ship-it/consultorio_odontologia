@@ -78,7 +78,7 @@ export default function Footer() {
               Servicios
             </h4>
             <ul className="space-y-2.5">
-              {['Psicología clínica', 'Odontología', 'Terapias especializadas', 'Atención personalizada'].map((s) => (
+              {['Psicología clínica', 'Odontología'].map((s) => (
                 <li key={s}>
                   <a href="#servicios" className="font-sans text-sm text-white/70 hover:text-gold transition-colors">
                     {s}

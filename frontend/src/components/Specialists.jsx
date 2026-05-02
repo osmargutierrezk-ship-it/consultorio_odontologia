@@ -50,17 +50,6 @@ export default function Specialists() {
               Conoce a nuestros especialistas
             </h2>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.3 }}
-          >
-            <button className="btn-outline text-sm">
-              Ver todos los especialistas
-              <ArrowRight size={14} />
-            </button>
-          </motion.div>
         </div>
 
         <div ref={ref} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -130,19 +119,6 @@ export default function Specialists() {
             transition={{ duration: 0.6, delay: 0.24 }}
             className="bg-gradient-to-br from-primary to-primary-700 rounded-3xl p-8 flex flex-col justify-between text-white min-h-[380px]"
           >
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center mb-6">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
-                </svg>
-              </div>
-              <h3 className="font-display text-2xl font-semibold mb-3">
-                ¿Quieres unirte a nuestro equipo?
-              </h3>
-              <p className="font-sans text-white/75 text-sm leading-relaxed">
-                Buscamos profesionales apasionados por el bienestar de sus pacientes.
-              </p>
-            </div>
             <a
               href="mailto:info@lumiplus.gt"
               className="inline-flex items-center gap-2 bg-gold text-white px-5 py-3 rounded-full font-sans text-sm font-semibold hover:bg-gold-dark transition-colors mt-6"

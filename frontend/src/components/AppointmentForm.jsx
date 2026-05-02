@@ -18,8 +18,6 @@ const schema = z.object({
 const services = [
   'Psicología clínica',
   'Odontología',
-  'Terapias especializadas',
-  'Atención personalizada',
 ]
 
 export default function AppointmentForm({ specialistId }) {

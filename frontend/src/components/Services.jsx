@@ -24,22 +24,6 @@ const services = [
     iconColor: 'text-gold',
     slug: 'odontologia',
   },
-  {
-    icon: HeartHandshake,
-    title: 'Terapias especializadas',
-    description: 'Evaluaciones, orientación vocacional y terapias complementarias.',
-    color: 'from-primary/8 to-beige',
-    iconColor: 'text-primary',
-    slug: 'terapias-especializadas',
-  },
-  {
-    icon: Star,
-    title: 'Atención personalizada',
-    description: 'Planes de tratamiento adaptados a tus necesidades y objetivos.',
-    color: 'from-gold/10 to-beige',
-    iconColor: 'text-gold-dark',
-    slug: 'atencion-personalizada',
-  },
 ]
 
 const containerVariants = {
