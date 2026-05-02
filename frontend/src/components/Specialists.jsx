@@ -111,21 +111,6 @@ export default function Specialists() {
               </div>
             </motion.div>
           ))}
-
-          {/* Teaser card */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.24 }}
-            className="bg-gradient-to-br from-primary to-primary-700 rounded-3xl p-8 flex flex-col justify-between text-white min-h-[380px]"
-          >
-            <a
-              href="mailto:info@lumiplus.gt"
-              className="inline-flex items-center gap-2 bg-gold text-white px-5 py-3 rounded-full font-sans text-sm font-semibold hover:bg-gold-dark transition-colors mt-6"
-            >
-              Contáctanos <ArrowRight size={14} />
-            </a>
-          </motion.div>
         </div>
       </div>
     </section>
