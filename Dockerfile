@@ -54,4 +54,5 @@ USER nodejs
 EXPOSE 3000
 
 # Migrar DB automáticamente y arrancar
-CMD ["sh", "-c", "npx prisma migrate deploy && node src/index.js"]
+# CMD ["sh", "-c", "npx prisma migrate deploy && node src/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy; node src/index.js"]
