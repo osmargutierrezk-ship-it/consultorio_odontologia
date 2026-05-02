@@ -1,0 +1,75 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Specialist {
+  id           Int      @id @default(autoincrement())
+  name         String
+  role         String
+  specialty    String
+  image        String?
+  phone        String?
+  email        String?
+  bio          String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  appointments Appointment[]
+
+  @@map("specialists")
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  icon        String?
+  slug        String   @unique
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  appointments Appointment[]
+
+  @@map("services")
+}
+
+model Appointment {
+  id           Int      @id @default(autoincrement())
+  name         String
+  phone        String
+  email        String?
+  date         DateTime
+  service      String
+  message      String?
+  status       String   @default("pending")
+  specialistId Int?
+  serviceId    Int?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  specialist Specialist? @relation(fields: [specialistId], references: [id])
+  serviceRef Service?    @relation(fields: [serviceId], references: [id])
+
+  @@map("appointments")
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contacts")
+}

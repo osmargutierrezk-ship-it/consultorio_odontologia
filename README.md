@@ -1,225 +1,212 @@
-# 🌿 LumiPlus — Sistema de Citas
+# 🌿 LumiPlus — Clínica Psicológica y Dental
 
-Sistema de agendamiento de citas para la clínica **LumiPlus** (dental y psicológica).  
-Construido con Node.js + Express + PostgreSQL (Prisma).
+> Plataforma web full-stack para la clínica LumiPlus en Guatemala City.  
+> Stack: React + Vite · Node/Express · PostgreSQL · Prisma · Docker · Render
 
 ---
 
-## 📁 Estructura del Proyecto
+## 📦 Estructura del proyecto
 
 ```
 lumiplus/
-├── src/
-│   ├── app.js                     # Express app principal
-│   ├── routes/
-│   │   ├── appointments.js        # Rutas de citas
-│   │   └── notifications.js       # Rutas de notificaciones
-│   ├── controllers/
-│   │   ├── appointmentController.js
-│   │   └── notificationController.js
-│   ├── services/
-│   │   ├── appointmentService.js  # Lógica de negocio + validación de horarios
-│   │   └── notificationService.js # Web Push
-│   └── middleware/
-│       ├── sse.js                 # Server-Sent Events (tiempo real)
-│       └── errorHandler.js
-├── prisma/
-│   └── schema.prisma              # Modelo de datos
-├── public/                        # Frontend estático
-│   ├── index.html
-│   ├── js/
-│   │   ├── app.js                 # Lógica frontend
-│   │   └── sw.js                  # Service Worker (Push)
-│   └── assets/
-│       └── logo.svg
-├── server.js                      # Entry point
-├── Dockerfile
+├── frontend/               # React + Vite + TailwindCSS + Framer Motion
+│   ├── src/
+│   │   ├── components/     # Navbar, Hero, Services, Specialists, Contact, Footer
+│   │   ├── pages/          # HomePage, AppointmentPage
+│   │   └── index.css       # Variables globales + Tailwind
+│   ├── nginx.conf          # Config Nginx para SPA
+│   └── Dockerfile
+├── backend/                # Node.js + Express + Prisma
+│   ├── src/
+│   │   ├── routes/         # services, specialists, appointments, contact
+│   │   └── index.js        # Entry point Express
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   └── seed.js
+│   └── Dockerfile
+├── docker-compose.yml
 ├── .env.example
 └── README.md
 ```
 
 ---
 
-## 🚀 Deploy en Render (paso a paso)
+## 🚀 Inicio rápido (Docker)
 
-### 1. Crear la base de datos PostgreSQL
-
-1. Ve a [render.com](https://render.com) → **New** → **PostgreSQL**
-2. Nombra tu DB: `lumiplus-db`
-3. Selecciona el plan (Free o Starter)
-4. Crea la base de datos
-5. Copia la **Internal Database URL** — la necesitas en el siguiente paso
-
-### 2. Crear el Web Service
-
-1. **New** → **Web Service**
-2. Conecta tu repositorio de GitHub/GitLab (o usa Deploy from repo URL)
-3. Configura:
-
-| Campo | Valor |
-|-------|-------|
-| **Name** | `lumiplus` |
-| **Runtime** | `Node` |
-| **Build Command** | `npm install` |
-| **Start Command** | `node server.js` |
-| **Branch** | `main` |
-
-4. En **Environment Variables**, agrega:
-
-```
-DATABASE_URL        = (Internal DB URL del paso anterior)
-VAPID_PUBLIC_KEY    = (ver sección VAPID más abajo)
-VAPID_PRIVATE_KEY   = (ver sección VAPID más abajo)
-VAPID_EMAIL         = mailto:admin@lumiplus.com
-NODE_ENV            = production
-```
-
-5. Click **Create Web Service** → ¡listo!
-
-> **Nota:** El servidor ejecuta `prisma db push` automáticamente al arrancar. No necesitas correr migraciones manualmente.
-
----
-
-## 🔔 Configurar Web Push (VAPID)
-
-Las claves VAPID son necesarias para las notificaciones push.
-
-### Generar claves localmente:
+### 1. Clonar y configurar variables
 
 ```bash
-# Instala web-push globalmente
-npm install -g web-push
-
-# Genera las claves
-web-push generate-vapid-keys
-```
-
-Salida esperada:
-```
-Public Key:  BExample...abc123
-Private Key: example...xyz789
-```
-
-Agrega ambas claves como variables de entorno en Render.
-
----
-
-## 🧪 Desarrollo Local
-
-```bash
-# 1. Clonar e instalar
 git clone https://github.com/tu-usuario/lumiplus.git
 cd lumiplus
-npm install
 
-# 2. Configurar entorno
+# Copiar variables de entorno
 cp .env.example .env
-# Edita .env con tu DATABASE_URL local
 
-# 3. Sincronizar base de datos
-npx prisma db push
+# Editar .env con tus valores
+nano .env
+```
 
-# 4. Iniciar servidor
+### 2. Agregar imágenes
+
+Coloca las imágenes en estas rutas dentro de `frontend/public/`:
+
+```
+frontend/public/
+├── assets/
+│   ├── carrusel/
+│   │   ├── img1.webp   ← Imagen hero 1
+│   │   ├── img2.webp   ← Imagen hero 2
+│   │   └── img3.webp   ← Imagen hero 3
+│   ├── specialists/
+│   │   ├── aaron.webp
+│   │   └── nohemi.webp
+│   └── clinic/
+│       └── interior.webp
+└── favicon.svg
+```
+
+### 3. Levantar con Docker Compose
+
+```bash
+docker-compose up --build
+```
+
+- **Frontend:** http://localhost
+- **Backend API:** http://localhost:3000
+- **Base de datos:** localhost:5432
+
+### 4. Seed de base de datos
+
+```bash
+docker-compose exec backend npm run prisma:seed
+```
+
+---
+
+## ☁️ Despliegue en Render
+
+### Backend (Web Service)
+
+| Campo | Valor |
+|---|---|
+| **Runtime** | Node |
+| **Build Command** | `npm ci && npx prisma generate && npx prisma migrate deploy` |
+| **Start Command** | `node src/index.js` |
+| **Root Directory** | `backend` |
+
+**Variables de entorno en Render:**
+```
+DATABASE_URL=postgresql://USER:PASS@HOST:PORT/DB
+PORT=3000
+JWT_SECRET=tu_secreto_64_chars
+FRONTEND_URL=https://lumiplus.onrender.com
+NODE_ENV=production
+```
+
+### Frontend (Static Site)
+
+| Campo | Valor |
+|---|---|
+| **Build Command** | `npm ci && npm run build` |
+| **Publish Directory** | `dist` |
+| **Root Directory** | `frontend` |
+
+**Variables de entorno en Render:**
+```
+VITE_API_URL=https://lumiplus-api.onrender.com
+VITE_GOOGLE_MAPS_KEY=tu_google_maps_key
+```
+
+### Base de datos
+
+Usar **Render PostgreSQL** (plan gratuito disponible).  
+Copiar el **Internal Database URL** como `DATABASE_URL` en el backend.
+
+---
+
+## 🔌 API Endpoints
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/health` | Health check |
+| `GET` | `/api/services` | Listar servicios |
+| `GET` | `/api/services/:slug` | Servicio por slug |
+| `GET` | `/api/specialists` | Listar especialistas |
+| `GET` | `/api/specialists/:id` | Especialista por ID |
+| `POST` | `/api/appointments` | Crear cita |
+| `GET` | `/api/contact` | Información de contacto |
+| `POST` | `/api/contact` | Enviar mensaje |
+
+### Ejemplo: Crear cita
+
+```json
+POST /api/appointments
+{
+  "name": "María García",
+  "phone": "5555-1234",
+  "email": "maria@ejemplo.com",
+  "date": "2024-06-15T10:00:00",
+  "service": "Psicología clínica",
+  "message": "Primera consulta"
+}
+```
+
+---
+
+## 🎨 Diseño
+
+| Token | Valor |
+|---|---|
+| Primary (verde) | `#3D5A45` |
+| Gold | `#C9A84C` |
+| Beige | `#F5F0E8` |
+| Forest | `#2C3E35` |
+| Fuente display | Cormorant Garamond |
+| Fuente body | DM Sans |
+
+---
+
+## 🗺️ Google Maps
+
+1. Obtener API key en [Google Cloud Console](https://console.cloud.google.com/)
+2. Habilitar **Maps JavaScript API** y **Maps Embed API**
+3. Agregar la key como `VITE_GOOGLE_MAPS_KEY` en `.env`
+4. Opcional: reemplazar el iframe en `Contact.jsx` con `@react-google-maps/api`
+
+---
+
+## 📱 Funcionalidades
+
+- ✅ Carrusel hero con autoplay (Framer Motion)
+- ✅ Formulario de citas con validación (React Hook Form + Zod)
+- ✅ Animaciones fade-up en scroll (Framer Motion)
+- ✅ Navbar responsive con menú hamburguesa
+- ✅ Mapa integrado (Google Maps iframe)
+- ✅ Botón WhatsApp directo
+- ✅ SEO básico (react-helmet-async)
+- ✅ Rate limiting en API
+- ✅ Lazy loading de imágenes
+- ✅ Manejo de errores en frontend
+
+---
+
+## 🛠️ Desarrollo local (sin Docker)
+
+```bash
+# Backend
+cd backend
+npm install
+cp .env.example .env  # editar DATABASE_URL
+npx prisma migrate dev
+npx prisma db seed
+npm run dev
+
+# Frontend (otra terminal)
+cd frontend
+npm install
 npm run dev
 ```
 
-Abre: http://localhost:3000
-
 ---
 
-## 📡 API Endpoints
-
-### Citas
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| `POST` | `/api/appointments` | Crear cita |
-| `GET` | `/api/appointments?telefono=xxx` | Listar citas por teléfono |
-| `GET` | `/api/appointments/:id` | Obtener cita por ID |
-| `PUT` | `/api/appointments/:id/status` | Actualizar estado (para sistema admin externo) |
-
-### Notificaciones
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| `GET` | `/api/notifications/vapid-public-key` | Obtener clave pública VAPID |
-| `POST` | `/api/notifications/test` | Enviar notificación de prueba |
-
-### Real-time
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| `GET` | `/api/events` | Conectarse a SSE (Server-Sent Events) |
-
-### Salud
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| `GET` | `/api/health` | Estado del servicio |
-
----
-
-## 📝 Ejemplos de uso
-
-### Crear una cita
-```bash
-curl -X POST https://tu-app.onrender.com/api/appointments \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nombre": "María García",
-    "telefono": "5555-1234",
-    "tipo_consulta": "odontologica",
-    "fecha": "2025-06-15",
-    "hora": "10:00",
-    "acepta_notificaciones": true
-  }'
-```
-
-### Actualizar estado (desde sistema admin externo)
-```bash
-curl -X PUT https://tu-app.onrender.com/api/appointments/1/status \
-  -H "Content-Type: application/json" \
-  -d '{ "estado": "aceptada" }'
-```
-
-Cuando el estado cambia a `aceptada`, el sistema:
-1. Actualiza la DB
-2. Envía push notification al cliente (si suscrito)
-3. Transmite el cambio por SSE a todos los clientes conectados
-
----
-
-## ⏰ Validación de Horarios
-
-El sistema verifica conflictos considerando la duración de cada cita:
-
-```
-Cita existente:  10:00 → 11:00 (60 min)
-Nueva a las:     10:30 → ❌ CONFLICTO (solapamiento)
-Nueva a las:     11:00 → ✅ OK (sin solapamiento)
-Nueva a las:     09:00 → ❌ CONFLICTO (solapamiento)
-```
-
-La lógica está preparada para citas de duración variable en el futuro.
-
----
-
-## 🔗 Integración con Sistema Admin
-
-El endpoint `PUT /api/appointments/:id/status` está diseñado para ser llamado desde el sistema admin externo (que se desarrollará por separado).
-
-**Recomendación:** Proteger este endpoint con una API key en el futuro:
-```
-Authorization: Bearer <admin-api-key>
-```
-
----
-
-## 🛠 Tech Stack
-
-- **Backend:** Node.js 20, Express 4
-- **ORM:** Prisma 5 + PostgreSQL
-- **Notificaciones:** Web Push API + Service Worker
-- **Tiempo real:** Server-Sent Events (SSE)
-- **Frontend:** HTML5 + CSS3 + Vanilla JS
-- **Deploy:** Render (Web Service + PostgreSQL)
+*Hecho con ❤️ para LumiPlus — Guatemala City*

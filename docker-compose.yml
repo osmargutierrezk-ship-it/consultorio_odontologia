@@ -1,0 +1,74 @@
+version: '3.9'
+
+services:
+  # ──────────── PostgreSQL ────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: lumiplus_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lumiplus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lumiplus_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-lumiplus_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lumiplus}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lumiplus_net
+
+  # ──────────── Backend ────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lumiplus_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-lumiplus}:${POSTGRES_PASSWORD:-lumiplus_secret}@postgres:5432/${POSTGRES_DB:-lumiplus_db}
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:-change_this_secret_in_production}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lumiplus_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ──────────── Frontend ────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+        VITE_GOOGLE_MAPS_KEY: ${VITE_GOOGLE_MAPS_KEY:-}
+    container_name: lumiplus_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - lumiplus_net
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  lumiplus_net:
+    driver: bridge
